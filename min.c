@@ -1,4 +1,4 @@
-/* gcc -O3 -Wl,"-static" 30q2.c -o 30q2 */
+/* gcc -O3 -static min.c -o min */
 int a,b=435,i,j,x=0,y=1,z;
 char*m,l[2015]="\11.\15";
 #define S z=l[y],l[y]=l[x],l[x]=z
