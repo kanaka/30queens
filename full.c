@@ -1,113 +1,78 @@
-#include <stdio.h>
-#include <stdlib.h>
+/* gcc -O3 -Wl,"-static" 30q3.c -o 30q3 */
+/* 
+ * "THE POWER OF RANDOM" by Joel Martin
+ *   The expanded and commented version
+ */
 
-#define PBOARD
-//#define SEEDSEARCH
+ /* Don't bother computing b,x or y the first time since they're known */
+int a,b=435,i,j,x=0,y=1,z;
 
-//int list[30];
-int list[30] ={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30};
-char *image[30] ={
-"|Q|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|",
-"|-|Q|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|",
-"|-|-|Q|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|",
-"|-|-|-|Q|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|",
-"|-|-|-|-|Q|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|",
-"|-|-|-|-|-|Q|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|",
-"|-|-|-|-|-|-|Q|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|",
-"|-|-|-|-|-|-|-|Q|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|",
-"|-|-|-|-|-|-|-|-|Q|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|",
-"|-|-|-|-|-|-|-|-|-|Q|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|",
-"|-|-|-|-|-|-|-|-|-|-|Q|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|",
-"|-|-|-|-|-|-|-|-|-|-|-|Q|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|",
-"|-|-|-|-|-|-|-|-|-|-|-|-|Q|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|",
-"|-|-|-|-|-|-|-|-|-|-|-|-|-|Q|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|",
-"|-|-|-|-|-|-|-|-|-|-|-|-|-|-|Q|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|",
-"|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|Q|-|-|-|-|-|-|-|-|-|-|-|-|-|-|",
-"|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|Q|-|-|-|-|-|-|-|-|-|-|-|-|-|",
-"|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|Q|-|-|-|-|-|-|-|-|-|-|-|-|",
-"|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|Q|-|-|-|-|-|-|-|-|-|-|-|",
-"|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|Q|-|-|-|-|-|-|-|-|-|-|",
-"|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|Q|-|-|-|-|-|-|-|-|-|",
-"|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|Q|-|-|-|-|-|-|-|-|",
-"|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|Q|-|-|-|-|-|-|-|",
-"|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|Q|-|-|-|-|-|-|",
-"|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|Q|-|-|-|-|-|",
-"|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|Q|-|-|-|-|",
-"|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|Q|-|-|-|",
-"|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|Q|-|-|",
-"|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|Q|-|",
-"|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|Q|"};
+/* output string */
+char m[1985];
 
-int fitness()
-{
-    int i,j,sum=0;
+/* 
+ * Fill our compute array with queens from upper left to lower right This
+ * starting position has the property that queens do not share any rows or
+ * columns with other queens. By swapping rows, this property is maintained.
+ */
+char l[30]={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
+    16,17,18,19,20,21,22,23,24,25,26,27,28,29,30};
 
+/* Swap rows l[x] and l[y] */
+#define Swap z=l[y],l[y]=l[x],l[x]=z
+
+/* 
+ * Do the queens in rows l[i] and l[j] attack each other?
+ * The variable s is "+" or "-" depending on which diagonal we want to test.
+ */
+#define Test(s) (l[i]==(l[j]s(i-j)))
+
+main () {
+  /* Repeat until number of attacks (b) is 0 */
+  for (;b;) {
+    /* 
+     * Swap two random rows, except the first time when we just swap the
+     * pre-loaded x and y  (0 and 1) 
+     */
+    Swap;
+    a=0;
+    /* Calculate number of attacks (a) */
     for (i=0; i<29; i++) {
-	for (j=i+1; j<30; j++) {
-	    //printf ("list[i]: %d, list[j]: %d, i: %d, j: %d\n", list[i], list[j],i,j);
-	    if ((list[i] == (list[j] + i-j)) ||
-		(list[i] == (list[j] - i+j))) {
-		sum++;
-	    }
-	}
+      for (j=i+1; j<30; j++) {
+        if (Test(+)||Test(-)) {
+          a++;
+        }
+      }
     }
-    return sum;
-}
-
-
-main ()
-{
-    int i, j, k, rand1, rand2, temp, fitness1;
-    int cnt;
-    int keep_going;
-
-//    printf("fitness starting: %d\n", fitness());
-
-
-#ifdef SEEDSEARCH
-    for (cnt=0; cnt<10000; cnt++) {
-	for (k=0; k<30; k++) {
-	    list[k]=k+1;
-	}
-	srand(cnt);
-#else
-	cnt=0;
-	srand(80*80-89);
-#endif
-	i=0;
-	keep_going=1;
-	while (keep_going) {
-	    fitness1 = fitness();
-	    rand1 = rand()%30;
-	    rand2 = rand()%30;
-	    /* Swap */
-	    temp = list[rand1];
-	    list[rand1] = list[rand2];
-	    list[rand2] = temp;
-	    if (fitness1 < fitness()) {
-		/* Swap back */
-		temp = list[rand1];
-		list[rand1] = list[rand2];
-		list[rand2] = temp;
-	    } else {
-		if (fitness() == 0) {
-#ifdef PBOARD
-		    printf ("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\n");
-		    for (j=0; j<30; j++) {
-			printf ("%s\n", image[list[j]-1]);
-		    }
-		    printf ("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\n");
-#endif
-		    printf ("%d , %d\n", i, cnt);
-		    keep_going=0;
-		}
-	    }
-    //	if (i%100==0) {
-    //	    printf("fitness: %d\n", fitness());
-    //	}
-	    i++;
-	};
-#ifdef SEEDSEARCH
+    /* If worse layout, swap back, otherwise save count for next time */
+    if (b<a) {
+      Swap;
+    } else {
+      b=a;
     }
-#endif
+    /* 
+     * Use (a) as a temporary and get two random rows using one rand() call.
+     * I don't bother seeding the generator since it defaults to 0
+     */
+    a=rand();
+    x=a%30;
+    y=a%29;
+  }
+  /* Generate the output string */
+  for (i=0; i<32; i++) {
+    for (j=0; j<31; j++) {
+      if (i%31) {
+        m[i*62+j*2] = '|';
+      } else {
+        m[i*62+j*2] = '+';
+      }
+      m[i*62+j*2+1]= '-';
+    }
+    m[i*62+61]= '\n';
+    if (i%31) {
+      m[i*62+l[i-1]*2-1]='Q';
+    }
+  }
+  /* Print the output string */
+  puts(m);
 }
