@@ -6,5 +6,9 @@ full: full.c
 min: min.c
 	$(CC) $(CFLAGS) $^ -o $@
 
+min2: min2.c
+	$(CC) $(CFLAGS) $^ -o $@
+
+
 clean:
 	rm full
