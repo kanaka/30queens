@@ -9,6 +9,8 @@ min: min.c
 min2: min2.c
 	$(CC) $(CFLAGS) $^ -o $@
 
+hack: hack.c
+	$(CC) $(CFLAGS) $^ -o $@
 
 clean:
 	rm full
