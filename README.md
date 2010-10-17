@@ -9,15 +9,16 @@ queen.
 ### History
 
 [Aaron Brooks](http://github.com/abrooks) and I were graduates from
-[Taylor University](http://www.taylor.edu) and in 2003 we were both
-working at HP. A former CS professor at Taylor issued a challenge to
-his class and also to former alumni to create a fast 30 queens solver.
+[Taylor University](http://www.taylor.edu) and in 2003 a former CS
+professor at Taylor issued a challenge to his class and alumni to
+create a fast 30 queens solver.
 
 We worked on the problem individually in our free time, but eventually
-decided it would be more fun to collaborate on a version that was
-still fast but as small as possible.
+decided to
+[collaborate](http://en.wikipedia.org/wiki/Pair_programming) on
+a version that was still fast but as small as possible.
 
-This is a result of that collaborative messing around.
+This is a result of that collaboration.
 
 
 ### Try it out
